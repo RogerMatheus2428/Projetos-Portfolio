@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int main() {
+    int idade;
+
+    printf("--- Classificador de Idade ---\n");
+    printf("Digite sua idade: ");
+
+    if (scanf("%d", &idade) != 1) {
+        printf("Erro: Por favor, digite um número válido.\n");
+        return 1;
+    }
+
+    if (idade < 0) {
+        printf("Idade inválida. A idade não pode ser um número negativo.\n");
+    } else if (idade <= 12) {
+        printf("Você é uma criança.\n");
+    } else if (idade <= 19) {
+        printf("Você é um jovem.\n");
+    } else if (idade <= 60) {
+        printf("Você é um adulto.\n");
+    } else { 
+        printf("Você é um idoso.\n");
+    }
+
+    printf("--- Fim do Classificador ---\n");
+
+    return 0;
