@@ -1,0 +1,56 @@
+#include <stdio.h>
+
+int main() {
+    char operador;
+    double num1, num2, resultado;
+
+    printf("--- Calculadora Inteligente ---\n");
+    printf("Selecione a operação (+, -, *, /): ");
+
+    if (scanf(" %c", &operador) != 1) {
+        printf("Erro na leitura do operador.\n");
+        return 1; // Retorna com código de erro
+    }
+
+    printf("Digite o primeiro número: ");
+    if (scanf("%lf", &num1) != 1) {
+        printf("Erro na leitura do primeiro número.\n");
+        return 1;
+    }
+
+    printf("Digite o segundo número: ");
+    if (scanf("%lf", &num2) != 1) {
+        printf("Erro na leitura do segundo número.\n");
+        return 1;
+    }
+
+    switch (operador) {
+        case '+':
+            resultado = num1 + num2;
+            printf("\nResultado: %.2lf + %.2lf = %.2lf\n", num1, num2, resultado);
+            break;
+        case '-':
+            resultado = num1 - num2;
+            printf("\nResultado: %.2lf - %.2lf = %.2lf\n", num1, num2, resultado);
+            break;
+        case '*':
+            resultado = num1 * num2;
+            printf("\nResultado: %.2lf * %.2lf = %.2lf\n", num1, num2, resultado);
+            break;
+        case '/':
+
+            if (num2 != 0) {
+                resultado = num1 / num2;
+                printf("\nResultado: %.2lf / %.2lf = %.2lf\n", num1, num2, resultado);
+            } else {
+                printf("\nErro: Divisão por zero não é permitida.\n");
+            }
+            break;
+
+            printf("\nErro: Operador '%c' inválido. Use +, -, *, ou /.\n", operador);
+    }
+
+    printf("\n--- Fim da Calculadora ---\n");
+
+    return 0;
+}
