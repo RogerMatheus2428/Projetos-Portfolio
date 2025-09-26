@@ -1,0 +1,24 @@
+#include <stdio.h> 
+
+int main() {
+
+    printf("--- Verificador de Sinal do Numero ---\n");
+    printf("Digite um numero: ");
+
+    if (scanf("%lf", &numero) != 1) {
+        printf("Erro: Por favor, digite um numero valido.\n");
+        return 1; 
+    }
+
+    if (numero > 0) {
+        printf("O numero %.2lf e POSITIVO.\n", numero);
+    } else if (numero < 0) {
+        printf("O numero %.2lf e NEGATIVO.\n", numero);
+    } else {
+        printf("O numero e ZERO.\n");
+    }
+
+    printf("--- Fim do Programa ---\n");
+
+    return 0;
+}
