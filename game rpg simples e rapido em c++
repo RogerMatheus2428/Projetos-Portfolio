@@ -1,0 +1,314 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <cstdlib>
+#include <ctime>
+#include <windows.h> // Para controle de console (setCursorPosition, Sleep)
+#include <conio.h>   // Para _getch() (input não bloqueante)
+#include <stdio.h>   // INCLUSÃO SOLICITADA - Permite usar printf/scanf se necessário
+
+// ===========================================
+// DEFINIÇÕES E ESTRUTURAS
+// ===========================================
+
+// Variáveis de Jogo
+const int GAME_WIDTH = 80;
+const int GAME_HEIGHT = 25;
+const int MAX_HP = 100;
+const int HEAL_COST = 25;
+
+// Estrutura de Personagem (Usada para o Jogador e para os Inimigos)
+struct Character {
+    std::string name;
+    int maxHP;
+    int currentHP;
+    int attack;
+    int defense;
+    int gold;
+    int potions;
+};
+
+// ===========================================
+// FUNÇÕES DE CONSOLE (Compatibilidade)
+// ===========================================
+
+/**
+ * @brief Move o cursor do console para uma posição (x, y) específica.
+ */
+void setCursorPosition(int x, int y) {
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+/**
+ * @brief Limpa toda a tela do console.
+ */
+void clearScreen() {
+    system("cls");
+}
+
+/**
+ * @brief Imprime uma linha de separação.
+ */
+void printSeparator() {
+    std::cout << "\n" << std::string(GAME_WIDTH, '=') << "\n";
+}
+
+/**
+ * @brief Pausa o console, esperando que o usuário pressione uma tecla.
+ */
+void pauseConsole() {
+    std::cout << "\n\n[Pressione qualquer tecla para continuar...]";
+    _getch(); // Usa _getch() do conio.h para esperar a tecla
+}
+
+// ===========================================
+// FUNÇÕES DE JOGABILIDADE
+// ===========================================
+
+/**
+ * @brief Inicializa os status do Jogador.
+ */
+void initializePlayer(Character& player) {
+    player.name = "Aventureiro";
+    player.maxHP = MAX_HP;
+    player.currentHP = MAX_HP;
+    player.attack = 15;
+    player.defense = 5;
+    player.gold = 50;
+    player.potions = 2;
+}
+
+/**
+ * @brief Cria um inimigo aleatório baseado no nível de dificuldade.
+ */
+Character createEnemy() {
+    Character enemy;
+    int type = rand() % 3; // 0=Goblin, 1=Orc, 2=Esqueleto
+
+    if (type == 0) {
+        enemy.name = "Goblin Astuto";
+        enemy.maxHP = 30;
+        enemy.attack = 10;
+        enemy.defense = 2;
+        enemy.gold = 10;
+    } else if (type == 1) {
+        enemy.name = "Orc Bruto";
+        enemy.maxHP = 50;
+        enemy.attack = 20;
+        enemy.defense = 8;
+        enemy.gold = 25;
+    } else {
+        enemy.name = "Esqueleto";
+        enemy.maxHP = 40;
+        enemy.attack = 15;
+        enemy.defense = 5;
+        enemy.gold = 15;
+    }
+
+    enemy.currentHP = enemy.maxHP;
+    return enemy;
+}
+
+/**
+ * @brief Exibe o status atual do Jogador.
+ */
+void displayStatus(const Character& player) {
+    clearScreen();
+    std::cout << std::string(GAME_WIDTH, '#') << "\n";
+    std::cout << "          FICHA DO PERSONAGEM - " << player.name << "\n";
+    std::cout << std::string(GAME_WIDTH, '#') << "\n";
+    printf("   HP: %d/%d\n", player.currentHP, player.maxHP); // Exemplo de uso de printf
+    std::cout << "   Ataque: " << player.attack << "\n";
+    std::cout << "   Defesa: " << player.defense << "\n";
+    std::cout << "   Ouro: " << player.gold << "\n";
+    std::cout << "   Poções de Cura: " << player.potions << "\n";
+    printSeparator();
+}
+
+/**
+ * @brief Função de combate por turnos.
+ * @return true se o jogador vencer, false se o jogador perder.
+ */
+bool battle(Character& player) {
+    Character enemy = createEnemy();
+    std::cout << "\nUm " << enemy.name << " aparece! Prepare-se para a luta!\n";
+    pauseConsole();
+
+    // Loop de Batalha
+    while (player.currentHP > 0 && enemy.currentHP > 0) {
+        clearScreen();
+        std::cout << std::string(GAME_WIDTH, '*') << "\n";
+        std::cout << "          B A T A L H A\n";
+        std::cout << std::string(GAME_WIDTH, '*') << "\n";
+        
+        // Status do Combate
+        std::cout << " > " << player.name << " HP: " << player.currentHP << "/" << player.maxHP;
+        std::cout << " | Poções: " << player.potions << "\n";
+        std::cout << " > " << enemy.name << " HP: " << enemy.currentHP << "/" << enemy.maxHP << "\n";
+        printSeparator();
+
+        std::cout << "Escolha sua ação:\n";
+        std::cout << " [1] Atacar\n";
+        std::cout << " [2] Usar Poção de Cura (x" << player.potions << ")\n";
+        std::cout << "Sua escolha: ";
+
+        char choice = _getch();
+        std::cout << choice << "\n"; // Exibe a tecla pressionada
+
+        // Ação do Jogador
+        if (choice == '1') {
+            int damage = player.attack + (rand() % 5) - enemy.defense;
+            if (damage < 1) damage = 1;
+            
+            enemy.currentHP -= damage;
+            std::cout << "\nVocê ataca o " << enemy.name << " causando " << damage << " de dano.\n";
+            Sleep(1000); // Pausa para leitura
+        } else if (choice == '2') {
+            if (player.potions > 0) {
+                int healAmount = 30 + (rand() % 10);
+                player.currentHP += healAmount;
+                if (player.currentHP > player.maxHP) {
+                    player.currentHP = player.maxHP;
+                }
+                player.potions--;
+                std::cout << "\nVocê bebe uma poção e recupera " << healAmount << " de HP.\n";
+            } else {
+                std::cout << "\nVocê não tem poções!\n";
+            }
+            Sleep(1000);
+        } else {
+            std::cout << "\nComando inválido. Você perde o turno!\n";
+            Sleep(1000);
+        }
+
+        // Verifica se o inimigo morreu
+        if (enemy.currentHP <= 0) {
+            break;
+        }
+        
+        // Turno do Inimigo
+        int damageTaken = enemy.attack + (rand() % 5) - player.defense;
+        if (damageTaken < 1) damageTaken = 1;
+        
+        player.currentHP -= damageTaken;
+        std::cout << enemy.name << " te ataca causando " << damageTaken << " de dano!\n";
+        Sleep(1500); // Pausa maior
+    }
+
+    // Fim da Batalha
+    printSeparator();
+    if (player.currentHP <= 0) {
+        std::cout << "Você foi derrotado pelo " << enemy.name << ". Fim de Jogo!\n";
+        return false;
+    } else {
+        std::cout << "Parabéns! Você derrotou o " << enemy.name << "!\n";
+        player.gold += enemy.gold;
+        player.attack++; // Recompensa: Aumenta ATK
+        std::cout << "Você ganha " << enemy.gold << " de ouro e seu ataque aumenta em 1!\n";
+        return true;
+    }
+}
+
+/**
+ * @brief Permite ao jogador curar na cidade.
+ */
+void restInTown(Character& player) {
+    displayStatus(player);
+    std::cout << "\nVocê decide descansar e curar seus ferimentos na cidade.\n";
+    std::cout << "O custo total para se curar completamente é de " << HEAL_COST << " Ouro.\n";
+
+    if (player.currentHP == player.maxHP) {
+        std::cout << "Sua saúde já está perfeita! Não é necessário curar.\n";
+        pauseConsole();
+        return;
+    }
+
+    if (player.gold >= HEAL_COST) {
+        std::cout << "Você tem " << player.gold << " Ouro. Deseja se curar?\n";
+        std::cout << " [1] Sim (" << HEAL_COST << " Ouro) | [2] Não\n";
+        char choice = _getch();
+        std::cout << choice << "\n";
+
+        if (choice == '1') {
+            player.gold -= HEAL_COST;
+            player.currentHP = player.maxHP;
+            std::cout << "\nVocê paga " << HEAL_COST << " Ouro e se sente totalmente revigorado!\n";
+            std::cout << "Seu HP está " << player.currentHP << "/" << player.maxHP << ".\n";
+        } else {
+            std::cout << "\nVocê decide não curar agora.\n";
+        }
+    } else {
+        std::cout << "Você não tem ouro suficiente para se curar. Custo: " << HEAL_COST << ".\n";
+    }
+    pauseConsole();
+}
+
+// ===========================================
+// LOOP PRINCIPAL
+// ===========================================
+
+void mainGameLoop() {
+    clearScreen();
+    std::cout << std::string(GAME_WIDTH, '#') << "\n";
+    std::cout << "          JOGO DE RPG - AVENTURA NO CONSOLE\n";
+    std::cout << std::string(GAME_WIDTH, '#') << "\n";
+    std::cout << "  Bem-vindo, Aventureiro! Pressione uma tecla para começar...";
+    _getch();
+
+    Character player;
+    initializePlayer(player);
+    srand((unsigned)time(NULL)); 
+    
+    // Loop de Exploração (Menu Principal)
+    while (player.currentHP > 0) {
+        displayStatus(player);
+        
+        std::cout << "O que você deseja fazer?\n";
+        std::cout << " [1] Explorar e Batalhar\n";
+        std::cout << " [2] Descansar na Cidade (Curar)\n";
+        std::cout << " [3] Ver Status\n";
+        std::cout << " [4] Sair do Jogo\n";
+        std::cout << "Sua escolha: ";
+        
+        char choice = _getch();
+        std::cout << choice << "\n";
+
+        if (choice == '1') {
+            if (!battle(player)) {
+                break; // Game Over
+            }
+        } else if (choice == '2') {
+            restInTown(player);
+        } else if (choice == '3') {
+            // Status já foi exibido no início do loop, apenas pausa para o jogador ler
+            pauseConsole();
+        } else if (choice == '4') {
+            break; // Sair do jogo
+        } else {
+            std::cout << "\nOpção inválida. Tente novamente.\n";
+            Sleep(500);
+        }
+    }
+    
+    // Tela de Fim de Jogo
+    clearScreen();
+    std::cout << std::string(GAME_WIDTH, '-') << "\n";
+    std::cout << "          F I M   D O   J O G O\n";
+    std::cout << std::string(GAME_WIDTH, '-') << "\n";
+    if (player.currentHP <= 0) {
+        std::cout << "\nSua jornada terminou em derrota. Você precisa de mais treino!\n";
+    } else {
+        std::cout << "\nVocê encerrou sua aventura com dignidade.\n";
+    }
+    std::cout << "Pontuação Final (Ouro): " << player.gold << "\n";
+    pauseConsole();
+}
+
+// Função Principal
+int main() {
+    mainGameLoop();
+    return 0;
+}
