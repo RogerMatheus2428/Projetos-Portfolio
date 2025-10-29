@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+int main () {
+	int contagem = 15;
+	
+	printf("     Contagem Regressiva de 3 em 3     \n");
+	printf("Inicio: %d\n", contagem);
+	printf("Parada: Quando for menor que 3\n\n");
+	
+	while (contagem >= 3) {
+		printf("Numero atual: %d\n", contagem);
+		contagem = contagem - 3;	
+	}
+	
+	printf("\n          \n");
+	printf("Fim da Contagem. O valor final da contagem (%d) eh menor que 3 \n", contagem);
+	printf("\n          \n");
+	
+	return 0;
+}
