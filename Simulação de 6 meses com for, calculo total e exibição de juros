@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int main (){
+	int meses = 6;
+	float juro_mensal = 50.00;
+	float juros_acumulados = 0.00;
+	
+	printf("Calculo de Juros Acumulados\n");
+	printf("Juro Mensal: R$%.2f\n", juro_mensal);
+	printf("Periodo: %dmeses\n\n", meses);
+	
+	for (int i = 1; i <= meses; i ++) {
+		juros_acumulados = juros_acumulados + juro_mensal;
+		printf("Mes %d: Juros Acumulados = R$%2f\n", i, juros_acumulados);
+	}
+	
+	printf("\n          \n");
+	printf("Total de Juros Acumulados em %d meses: R$%2f\n", meses, juros_acumulados);
+	printf("\n          \n");
+	
+	return 0;
+}
