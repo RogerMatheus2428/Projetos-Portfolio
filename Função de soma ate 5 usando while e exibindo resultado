@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+int somar_ate_limite(int limite);
+
+int main(){
+	int limite_maximo = 5;
+	int resultado_soma;
+	
+	resultado_soma = somar_ate_limite(limite_maximo);
+	printf("A soma dos numeros de 1 ate %d eh: %d\n", limite_maximo, resultado_soma);
+	
+	return 0;
+}
+int somar_ate_limite(int limite) {
+	int soma = 0;
+	int contagem = 1;
+	
+	while (contagem <= limite) {
+		soma = soma + contagem;
+		contagem++;
+	}
+	
+	return soma;
+	}
